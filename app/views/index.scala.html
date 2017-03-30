@@ -1,0 +1,24 @@
+@(message: String)(implicit request: RequestHeader)
+
+@main(message) {
+
+    <div id="tweets"></div>
+    <script type="text/javascript">
+      var socketUrl = "@routes.Application.tweets().webSocketURL()"
+      var tweetSocket = new WebSocket(socketUrl)
+
+      tweetSocket.onmessage = function(ev) {
+        console.log(ev)
+        var data = JSON.parse(ev.data)
+        var tweet = document.createElement("p")
+        var text = document.createTextNode(data.text)
+        tweet.appendChild(text)
+        document.getElementById("tweets").appendChild(tweet)
+      }
+
+      tweetSocket.onopen = function() {
+        tweetSocket.send("subscribe")
+      }
+    </script>
+
+}
